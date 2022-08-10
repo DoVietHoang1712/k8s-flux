@@ -1,0 +1,38 @@
+apiVersion: image.toolkit.fluxcd.io/v1alpha1
+kind: ImageRepository
+metadata:
+  name: helloworld
+  namespace: flux-system
+spec:
+  image: hoang1712/nginx
+  interval: 1m0s
+---
+apiVersion: image.toolkit.fluxcd.io/v1alpha1
+kind: ImagePolicy
+metadata:
+  name: helloworld
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: helloworld
+  policy:
+    semver:
+      range: '>= 1.0.0 <2.0.0'
+---
+apiVersion: image.toolkit.fluxcd.io/v1alpha1
+kind: ImageUpdateAutomation
+metadata:
+  name: helloworld
+  namespace: flux-system
+spec:
+  checkout:
+    branch: main
+    gitRepositoryRef:
+      name: helloworld
+  commit:
+    authorEmail: fluxcdbot@particule.io
+    authorName: fluxcdbot
+    messageTemplate: 'update image'
+  interval: 1m0s
+  update:
+    strategy: Setters
